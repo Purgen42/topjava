@@ -3,11 +3,11 @@ package ru.javawebinar.topjava.util;
 import ru.javawebinar.topjava.model.UserMeal;
 import ru.javawebinar.topjava.model.UserMealWithExcess;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class UserMealsUtil {
     public static void main(String[] args) {
@@ -27,13 +27,38 @@ public class UserMealsUtil {
 //        System.out.println(filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
     }
 
+    // Two-pass algorithm
     public static List<UserMealWithExcess> filteredByCycles(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        // TODO return filtered list with excess. Implement by cycles
-        return null;
+        if (meals == null) return null;
+        Map<LocalDate, Integer> totalCaloriesPerDay = new HashMap<>();
+        // Calculate actual daily calories
+        for (UserMeal meal : meals) {
+            LocalDate date = meal.getDateTime().toLocalDate();
+            totalCaloriesPerDay.merge(date, meal.getCalories(), Integer::sum);
+        }
+        List<UserMealWithExcess> resultList = new ArrayList<>();
+        // Filter source list and convert to DTO
+        for (UserMeal meal : meals) {
+            LocalTime time = meal.getDateTime().toLocalTime();
+            if (TimeUtil.isBetweenHalfOpen(time, startTime, endTime)) {
+                LocalDate date = meal.getDateTime().toLocalDate();
+                boolean excess = totalCaloriesPerDay.get(date) > caloriesPerDay;
+                resultList.add(userMealsToUserMealsWithExcess(meal, excess));
+            }
+        }
+        return resultList;
     }
 
     public static List<UserMealWithExcess> filteredByStreams(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         // TODO Implement by streams
         return null;
+    }
+
+    // Convert UserMeal (entity) to UserMealWithExcess(DTO)
+    private static UserMealWithExcess userMealsToUserMealsWithExcess(UserMeal meal, boolean excess) {
+        LocalDateTime dateTime = meal.getDateTime();
+        String description = meal.getDescription();
+        int calories = meal.getCalories();
+        return new UserMealWithExcess(dateTime, description, calories, excess);
     }
 }
