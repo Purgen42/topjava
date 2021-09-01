@@ -39,20 +39,22 @@ public class UserMealsUtil {
     public static List<UserMealWithExcess> filteredByCycles(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         Map<LocalDate, Integer> totalCaloriesPerDay = new HashMap<>();
         // Calculate actual daily calories
-        for (UserMeal meal : meals) {
+        meals.forEach(meal ->
+        {
             LocalDate date = meal.getDateTime().toLocalDate();
             totalCaloriesPerDay.merge(date, meal.getCalories(), Integer::sum);
-        }
+        });
         List<UserMealWithExcess> resultList = new ArrayList<>();
         // Filter source list and convert to DTO
-        for (UserMeal meal : meals) {
+        meals.forEach(meal ->
+        {
             LocalTime time = meal.getDateTime().toLocalTime();
             if (TimeUtil.isBetweenHalfOpen(time, startTime, endTime)) {
                 LocalDate date = meal.getDateTime().toLocalDate();
                 boolean excess = totalCaloriesPerDay.get(date) > caloriesPerDay;
                 resultList.add(userMealsToUserMealsWithExcess(meal, excess));
             }
-        }
+        });
         return resultList;
     }
 
@@ -68,14 +70,17 @@ public class UserMealsUtil {
                 .collect(Collectors.toList());
     }
 
-    // Optional task: single pass on UserMeals list, additional passes on sublists
+    // Optional task: single pass on meals, additional passes on sublists
     public static List<UserMealWithExcess> filteredByCyclesOptional(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         Map<LocalDate, Integer> totalCaloriesPerDay = new HashMap<>();
         Map<LocalDate, Boolean> exceed = new HashMap<>();
         Map<LocalDate, List<UserMeal>> dailyMeals = new HashMap<>();
-        Map<LocalDateTime, UserMealWithExcess> resultMap = new HashMap<>();
+        // Map to store resultList indices
+        Map<LocalDateTime, Integer> resultIndex = new HashMap<>();
+        List<UserMealWithExcess> resultList = new ArrayList<>();
 
-        for (UserMeal meal : meals) {
+        meals.forEach(meal ->
+        {
             LocalDate date = meal.getDateTime().toLocalDate();
             exceed.putIfAbsent(date, false);
             List<UserMeal> mealsThisDay = dailyMeals.computeIfAbsent(date, k -> new ArrayList<>());
@@ -85,15 +90,22 @@ public class UserMealsUtil {
                     // if this meal overweights calories limit for this day, we reset all previous meals for this day with excess = true ones
                     exceed.put(date, true);
                     // runs once per each sublist at most, so no increase of complexity
-                    mealsThisDay.forEach(m -> {if (TimeUtil.isBetweenHalfOpen(m.getDateTime().toLocalTime(), startTime, endTime))
-                        resultMap.put(m.getDateTime(), userMealsToUserMealsWithExcess(m, true));});
+                    mealsThisDay.forEach(m -> {
+                        if (TimeUtil.isBetweenHalfOpen(m.getDateTime().toLocalTime(), startTime, endTime)) {
+                            // Getting resultList indices that are already set for the day and resetting them in resultList
+                            Integer index = resultIndex.get(m.getDateTime());
+                            if (index != null) resultList.set(index, userMealsToUserMealsWithExcess(m, true));
+                        }
+                    });
                 }
             }
             mealsThisDay.add(meal);
-            if (TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime))
-                resultMap.put(meal.getDateTime(), userMealsToUserMealsWithExcess(meal, exceed.get(date)));
-        }
-        return new ArrayList<>(resultMap.values());
+            if (TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime)) {
+                resultList.add(userMealsToUserMealsWithExcess(meal, exceed.get(date)));
+                resultIndex.put(meal.getDateTime(), resultList.size() - 1);
+            }
+        });
+        return resultList;
     }
 
 
