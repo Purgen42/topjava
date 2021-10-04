@@ -30,10 +30,6 @@ public class UserMealWithExcess {
         return calories;
     }
 
-    public boolean isExcess() {
-        return excess;
-    }
-
     @Override
     public String toString() {
         return "UserMealWithExcess{" +
