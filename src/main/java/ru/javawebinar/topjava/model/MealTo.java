@@ -19,9 +19,8 @@ public class MealTo {
         this.excess = excess;
     }
 
-    public String getDateTimeString() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        return dateTime.format(formatter);
+    public LocalDateTime getDateTime() {
+        return dateTime;
     }
 
     public String getDescription() {

@@ -11,12 +11,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = getLogger(MealServlet.class);
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -24,7 +26,7 @@ public class MealServlet extends HttpServlet {
 
         List<MealTo> meals = MealsUtil.filteredByStreams(MealsTestValues.TEST_MEALS_LIST, null, null, MealsTestValues.CALORIES_PER_DAY);
         req.setAttribute("meals", meals);
+        req.setAttribute("formatter", formatter);
         req.getRequestDispatcher("/meals.jsp").forward(req, resp);
-
     }
 }

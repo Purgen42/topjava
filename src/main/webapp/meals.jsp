@@ -37,8 +37,8 @@
         <th>Calories</th>
     </tr>
 <c:forEach items="${requestScope.meals}" var="meal">
-    <tr class="${meal.excess ? 'exceed':'notExceed'}">
-        <td><c:out value="${meal.dateTimeString}"/></td>
+    <tr class="${meal.excess ? "exceed":"notExceed"}">
+        <td><c:out value="${meal.dateTime.format(requestScope.formatter)}"/></td>
         <td><c:out value="${meal.description}"/></td>
         <td><c:out value="${meal.calories}"/></td>
     </tr>
