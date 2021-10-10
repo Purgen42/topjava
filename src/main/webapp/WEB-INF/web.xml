@@ -6,6 +6,11 @@
 
     <display-name>Topjava</display-name>
 
+    <context-param>
+        <param-name>dateTimePattern</param-name>
+        <param-value>yyyy-MM-dd HH:mm</param-value>
+    </context-param>
+
     <servlet>
         <servlet-name>userServlet</servlet-name>
         <servlet-class>ru.javawebinar.topjava.web.UserServlet</servlet-class>
@@ -24,5 +29,17 @@
         <servlet-name>mealServlet</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
-
+    <servlet-mapping>
+        <servlet-name>mealServlet</servlet-name>
+        <url-pattern>/meals</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>mealControllerServlet</servlet-name>
+        <servlet-class>ru.javawebinar.topjava.web.MealControllerServlet</servlet-class>
+        <load-on-startup>0</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>mealControllerServlet</servlet-name>
+        <url-pattern>/mealController</url-pattern>
+    </servlet-mapping>
 </web-app>
