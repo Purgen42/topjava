@@ -1,0 +1,44 @@
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+td {
+    color: white;
+}
+
+table {
+    width: 100%;
+}
+
+.linkColumn {
+    text-align: center;
+}
+
+.tableLink {
+    color: yellow;
+}
+
+.notExceed {
+    background-color: green;
+}
+
+.exceed {
+    background-color: red;
+}
+
+form {
+    display: table;
+}
+
+p {
+    display: table-row;
+}
+
+label {
+    display: table-cell;
+}
+
+input {
+    display: table-cell;
+}

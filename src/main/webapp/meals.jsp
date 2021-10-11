@@ -4,39 +4,10 @@
 <html>
 <head>
     <title>Meals list</title>
-    <style>
-        table, th, td {
-            border: 1px solid black;
-            border-collapse: collapse;
-        }
-
-        td {
-            color: white;
-        }
-
-        table {
-            width: 100%;
-        }
-
-        .linkColumn {
-            text-align: center;
-        }
-
-        .tableLink {
-            color: yellow;
-        }
-
-        .notExceed {
-            background-color: green;
-        }
-
-        .exceed {
-            background-color: red;
-        }
-
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<h3><a href="index.html">Home</a></h3>
 <table>
     <caption><H1>Meals table</H1></caption>
     <colgroup>
@@ -55,16 +26,16 @@
     </tr>
     <c:forEach items="${requestScope.meals}" var="meal">
         <tr class="${meal.excess ? "exceed":"notExceed"}">
-            <td><c:out value="${f:formatLocalDateTime(meal.dateTime, initParam.dateTimePattern)}"/></td>
-            <td><c:out value="${meal.description}"/></td>
-            <td><c:out value="${meal.calories}"/></td>
+            <td>${f:formatLocalDateTime(meal.dateTime)}</td>
+            <td>${meal.description}</td>
+            <td>${meal.calories}</td>
             <td class="linkColumn"><a class="tableLink"
-                                      href="mealController?action=edit&id=<c:out value="${meal.id}"/>">Update</a></td>
+                                      href="meals?action=edit&id=${meal.id}">Update</a></td>
             <td class="linkColumn"><a class="tableLink"
-                                      href="mealController?action=delete&id=<c:out value="${meal.id}"/>">Delete</a></td>
+                                      href="meals?action=delete&id=${meal.id}">Delete</a></td>
         </tr>
     </c:forEach>
 </table>
-<p><a href="mealController?action=insert">Add User</a></p>
+<p><a href="meals?action=insert">Add Meal</a></p>
 </body>
 </html>
