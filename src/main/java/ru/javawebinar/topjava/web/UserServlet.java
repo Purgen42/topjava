@@ -15,6 +15,9 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String user = request.getParameter("user");
+        int userId = user == null || user.isEmpty() ? 1 : Integer.parseInt(user);
+        SecurityUtil.setAuthUserId(userId);
         log.debug("forward to users");
         request.getRequestDispatcher("/users.jsp").forward(request, response);
     }
