@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
 import javax.servlet.ServletException;
@@ -18,7 +17,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
-import java.util.function.Predicate;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
@@ -84,21 +82,11 @@ public class MealServlet extends HttpServlet {
                 String timeFrom = request.getParameter("timeFrom");
                 String timeTo = request.getParameter("timeTo");
                 log.info("filter dateFrom={} dateTo={} timeFrom={} timeTo={}", dateFrom, dateTo, timeFrom, timeTo);
-                Predicate<Meal> dateFromPredicate = dateFrom == null || dateFrom.isEmpty() ? m -> true :
-                        m -> m.getDate().compareTo(LocalDate.parse(dateFrom)) >= 0;
-                Predicate<Meal> dateToPredicate = dateFrom == null || dateTo.isEmpty() ? m -> true :
-                        m -> m.getDate().compareTo(LocalDate.parse(dateTo)) <= 0;
-                Predicate<Meal> timeFromPredicate = timeFrom == null || timeFrom.isEmpty() ? m -> true :
-                        m -> m.getTime().compareTo(LocalTime.parse(timeFrom)) >= 0;
-                Predicate<Meal> timeToPredicate = timeTo == null || timeTo.isEmpty() ? m -> true :
-                        m -> m.getTime().compareTo(LocalTime.parse(timeTo)) < 0;
-                request.setAttribute("dateFrom", dateFrom);
-                request.setAttribute("dateTo", dateTo);
-                request.setAttribute("timeFrom", timeFrom);
-                request.setAttribute("timeTo", timeTo);
-                request.setAttribute("meals",
-                        MealsUtil.filterByPredicate(mealController.getAll(), SecurityUtil.authUserCaloriesPerDay(),
-                                dateFromPredicate.and(dateToPredicate).and(timeFromPredicate).and(timeToPredicate)));
+                request.setAttribute("meals", mealController.getFiltered(
+                        dateFrom == null || dateFrom.isEmpty() ? null : LocalDate.parse(dateFrom),
+                        dateTo == null || dateTo.isEmpty() ? null : LocalDate.parse(dateTo),
+                        timeFrom == null || timeFrom.isEmpty() ? null : LocalTime.parse(timeFrom),
+                        timeTo == null || timeTo.isEmpty() ? null : LocalTime.parse(timeTo)));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }

@@ -24,22 +24,22 @@
     <form method="get" action="meals">
         <label>
             From date:
-            <input type="date" name="dateFrom" value="${requestScope.dateFrom}">
+            <input type="date" name="dateFrom" value="${param.dateFrom}">
         </label>
         <br/>
         <label>
             To date:
-            <input type="date" name="dateTo" value="${requestScope.dateTo}">
+            <input type="date" name="dateTo" value="${param.dateTo}">
         </label>
         <br/>
         <label>
             From time:
-            <input type="time" name="timeFrom" value="${requestScope.timeFrom}">
+            <input type="time" name="timeFrom" value="${param.timeFrom}">
         </label>
         <br/>
         <label>
             To time (open):
-            <input type="time" name="timeTo" value="${requestScope.timeTo}">
+            <input type="time" name="timeTo" value="${param.timeTo}">
         </label>
         <br/>
         <button type="submit">Apply filter</button>

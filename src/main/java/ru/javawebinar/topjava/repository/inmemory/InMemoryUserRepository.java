@@ -26,7 +26,8 @@ public class InMemoryUserRepository implements UserRepository {
     @Override
     public User save(User user) {
         log.info("save {}", user);
-        if (getByEmail(user.getEmail()) != null) {
+        User sameEmailUser = getByEmail(user.getEmail());
+        if (sameEmailUser != null && !sameEmailUser.getId().equals(user.getId())) {
             return null;
         }
         if (user.isNew()) {
@@ -55,7 +56,7 @@ public class InMemoryUserRepository implements UserRepository {
     public User getByEmail(String email) {
         log.info("getByEmail {}", email);
         return repository.values().stream()
-                .filter(u -> u.getEmail().equals(email))
+                .filter(u -> u.getEmail().equalsIgnoreCase(email))
                 .findAny()
                 .orElse(null);
     }
