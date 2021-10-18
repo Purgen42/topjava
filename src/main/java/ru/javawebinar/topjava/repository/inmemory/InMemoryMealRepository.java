@@ -10,16 +10,16 @@ import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.Month;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Repository
 public class InMemoryMealRepository implements MealRepository {
@@ -39,23 +39,24 @@ public class InMemoryMealRepository implements MealRepository {
         log.info("save {}", meal);
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
-            repository.putIfAbsent(userId, new ConcurrentHashMap<>());
+            repository.computeIfAbsent(userId, k -> new ConcurrentHashMap<>());
             repository.get(userId).put(meal.getId(), meal);
             return meal;
         }
-        return repository.getOrDefault(userId, Collections.emptyMap()).computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
+        return Optional.ofNullable(repository.get(userId))
+                .map(m -> m.computeIfPresent(meal.getId(), (id, oldMeal) -> meal)).orElse(null);
     }
 
     @Override
     public boolean delete(int id, int userId) {
         log.info("delete {}", id);
-        return repository.getOrDefault(userId, Collections.emptyMap()).remove(id) != null;
+        return Optional.ofNullable(repository.get(userId)).map(m -> m.remove(id)).isPresent();
     }
 
     @Override
     public Meal get(int id, int userId) {
         log.info("get {}", id);
-        return repository.getOrDefault(userId, Collections.emptyMap()).get(id);
+        return Optional.ofNullable(repository.get(userId)).map(m -> m.get(id)).orElse(null);
     }
 
     @Override
@@ -65,16 +66,14 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public List<Meal> getFiltered(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime, int userId) {
-        return filterByPredicate(userId, m -> DateTimeUtil.isBetweenClosed(m.getDate(), startDate, endDate)
-                && DateTimeUtil.isBetweenHalfOpen(m.getTime(), startTime, endTime));
+    public List<Meal> getFiltered(LocalDate startDate, LocalDate endDate, int userId) {
+        return filterByPredicate(userId, m -> DateTimeUtil.isBetweenClosed(m.getDate(), startDate, endDate));
     }
 
     private List<Meal> filterByPredicate(int userId, Predicate<Meal> predicate) {
-        return repository.getOrDefault(userId, Collections.emptyMap()).values().stream()
+        return Optional.ofNullable(repository.get(userId)).map(m -> m.values().stream()).orElse(Stream.empty())
                 .filter(predicate)
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }
 }
-
