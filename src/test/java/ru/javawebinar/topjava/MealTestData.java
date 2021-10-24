@@ -51,4 +51,10 @@ public class MealTestData {
         updated.setCalories(333);
         return updated;
     }
+
+    public static Meal getUpdatedNotFound() {
+        Meal updated = getUpdated();
+        updated.setId(NOT_FOUND);
+        return updated;
+    }
 }

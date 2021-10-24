@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.service;
 
-import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -26,7 +25,7 @@ import static ru.javawebinar.topjava.MealTestData.*;
 })
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
-public class MealServiceTest extends TestCase {
+public class MealServiceTest {
 
     static {
         // Only for postgres driver logging
@@ -49,6 +48,11 @@ public class MealServiceTest extends TestCase {
     }
 
     @Test
+    public void getWrongUser() {
+        assertThrows(NotFoundException.class, () -> service.get(MealTestData.USER_MEAL_1_ID, UserTestData.ADMIN_ID));
+    }
+
+    @Test
     public void delete() {
         service.delete(USER_MEAL_1_ID, UserTestData.USER_ID);
         assertThrows(NotFoundException.class, () -> service.get(USER_MEAL_1_ID, UserTestData.USER_ID));
@@ -60,26 +64,22 @@ public class MealServiceTest extends TestCase {
     }
 
     @Test
+    public void deleteWrongUser() {
+        assertThrows(NotFoundException.class, () -> service.delete(USER_MEAL_1_ID, UserTestData.ADMIN_ID));
+    }
+
+    @Test
     public void getBetweenInclusive() {
         List<Meal> filtered = service.getBetweenInclusive(userMeal1.getDate(), userMeal1.getDate(), UserTestData.USER_ID);
-        assertMatch(filtered,
-                userMeal1,
-                userMeal2,
-                userMeal3,
-                userMeal4);
+        assertMatch(filtered, userMeal1, userMeal2, userMeal3, userMeal4);
+        filtered = service.getBetweenInclusive(null, null, UserTestData.USER_ID);
+        assertMatch(filtered, userMeal1, userMeal2, userMeal3, userMeal4, userMeal5, userMeal6, userMeal7);
     }
 
     @Test
     public void getAll() {
         List<Meal> all = service.getAll(UserTestData.USER_ID);
-        assertMatch(all,
-                userMeal1,
-                userMeal2,
-                userMeal3,
-                userMeal4,
-                userMeal5,
-                userMeal6,
-                userMeal7);
+        assertMatch(all, userMeal1, userMeal2, userMeal3, userMeal4, userMeal5, userMeal6, userMeal7);
     }
 
     @Test
@@ -87,6 +87,16 @@ public class MealServiceTest extends TestCase {
         Meal updated = getUpdated();
         service.update(updated, UserTestData.USER_ID);
         assertMatch(service.get(USER_MEAL_1_ID, UserTestData.USER_ID), getUpdated());
+    }
+
+    @Test
+    public void updateNotFound() {
+        assertThrows(NotFoundException.class, () -> service.update(getUpdatedNotFound(), UserTestData.USER_ID));
+    }
+
+    @Test
+    public void updateWrongUser() {
+        assertThrows(NotFoundException.class, () -> service.update(getUpdated(), UserTestData.ADMIN_ID));
     }
 
     @Test
