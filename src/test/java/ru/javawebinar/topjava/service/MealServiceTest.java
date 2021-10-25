@@ -16,11 +16,13 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.util.List;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
+        "classpath:spring/spring-app-jdbc.xml",
         "classpath:spring/spring-db.xml"
 })
 @RunWith(SpringRunner.class)
@@ -72,7 +74,11 @@ public class MealServiceTest {
     public void getBetweenInclusive() {
         List<Meal> filtered = service.getBetweenInclusive(userMeal1.getDate(), userMeal1.getDate(), UserTestData.USER_ID);
         assertMatch(filtered, userMeal1, userMeal2, userMeal3, userMeal4);
-        filtered = service.getBetweenInclusive(null, null, UserTestData.USER_ID);
+    }
+
+    @Test
+    public void getBetweenInclusiveNullBoundaries() {
+        List<Meal> filtered = service.getBetweenInclusive(null, null, UserTestData.USER_ID);
         assertMatch(filtered, userMeal1, userMeal2, userMeal3, userMeal4, userMeal5, userMeal6, userMeal7);
     }
 
@@ -112,7 +118,14 @@ public class MealServiceTest {
     @Test
     public void duplicateDateTimeCreate() {
         assertThrows(DataAccessException.class, () ->
-                service.create(new Meal(userMeal1.getDateTime(), "Duplicate dateTime for user", 100), UserTestData.USER_ID));
-        service.create(new Meal(userMeal1.getDateTime(), "Duplicate dateTime, but for admin", 100), UserTestData.ADMIN_ID);
+                service.create(new Meal(userMeal1.getDateTime(), "Duplicate dateTime for user", 100),
+                        UserTestData.USER_ID));
+    }
+
+
+    @Test
+    public void duplicateDateTimeAnotherUserCreate() {
+        assertNotNull(service.create(new Meal(userMeal1.getDateTime(), "Duplicate dateTime, but for admin", 100),
+                UserTestData.ADMIN_ID));
     }
 }
