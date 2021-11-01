@@ -1,6 +1,9 @@
 package ru.javawebinar.topjava.service;
 
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
@@ -17,7 +20,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -32,45 +35,32 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
     private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
-    private static ArrayList<String> resultLines;
-
-    @BeforeClass
-    public static void init() {
-        resultLines = new ArrayList<>();
-        resultLines.add("MealServiceTest results:");
-    }
-
-    @AfterClass
-    public static void writeLog() {
-        resultLines.forEach(log::debug);
-    }
-
-
-    private static void appendStat(Description description, String status, long nanos) {
-        resultLines.add(String.format("%s: status=%s, time=%d ms", description.getMethodName(), status, Math.round(nanos / 1000000.0)));
-    }
+    public static final String BLUE = "\033[0;34m";    // ANSI blue
+    public static final String RESET = "\033[0m";      // ANSI reset color
+    private static StringBuilder resultLines;
 
     @Rule
     public final Stopwatch stopwatch = new Stopwatch() {
         @Override
-        protected void succeeded(long nanos, Description description) {
-            appendStat(description, "succeeded", nanos);
-        }
-
-        @Override
-        protected void failed(long nanos, Throwable e, Description description) {
-            appendStat(description, "failed", nanos);
-        }
-
-        @Override
-        protected void skipped(long nanos, AssumptionViolatedException e, Description description) {
-            appendStat(description, "skipped", nanos);
+        protected void finished(long nanos, Description description) {
+            resultLines.append(String.format("%-25s %s%d ms%s%n", description.getMethodName(), BLUE,
+                    TimeUnit.NANOSECONDS.toMillis(nanos), RESET));
         }
     };
 
-
     @Autowired
     private MealService service;
+
+    @BeforeClass
+    public static void init() {
+        resultLines = new StringBuilder();
+        resultLines.append("MealServiceTest results:\n");
+    }
+
+    @AfterClass
+    public static void writeLog() {
+        log.debug(resultLines.toString());
+    }
 
     @Test
     public void delete() {
@@ -103,7 +93,6 @@ public class MealServiceTest {
         assertThrows(DataAccessException.class, () ->
                 service.create(new Meal(null, meal1.getDateTime(), "duplicate", 100), USER_ID));
     }
-
 
     @Test
     public void get() {
