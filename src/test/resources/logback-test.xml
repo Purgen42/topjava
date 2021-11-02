@@ -4,8 +4,25 @@
         <resetJUL>true</resetJUL>
     </contextListener>
 
-    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="console-info" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
         <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d{HH:mm:ss.SSS} %-5level %class{50}.%M:%L - %blue(%msg) %n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>DENY</onMatch>
+            <onMismatch>ACCEPT</onMismatch>
+        </filter>
+         <encoder>
             <charset>UTF-8</charset>
             <pattern>%d{HH:mm:ss.SSS} %-5level %class{50}.%M:%L - %msg%n</pattern>
         </encoder>
@@ -17,6 +34,7 @@
 
     <root level="INFO">
         <appender-ref ref="console"/>
+        <appender-ref ref="console-info"/>
     </root>
 
 </configuration>

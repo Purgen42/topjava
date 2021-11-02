@@ -35,21 +35,20 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
     private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
-    public static final String BLUE = "\033[0;34m";    // ANSI blue
-    public static final String RESET = "\033[0m";      // ANSI reset color
     private static StringBuilder resultLines;
+
+    @Autowired
+    private MealService service;
 
     @Rule
     public final Stopwatch stopwatch = new Stopwatch() {
         @Override
         protected void finished(long nanos, Description description) {
-            resultLines.append(String.format("%-25s %s%d ms%s%n", description.getMethodName(), BLUE,
-                    TimeUnit.NANOSECONDS.toMillis(nanos), RESET));
+            long millis = TimeUnit.NANOSECONDS.toMillis(nanos);
+            log.info("Timeout: {} ms", millis);
+            resultLines.append(String.format("%-25s %d ms%n", description.getMethodName(), millis));
         }
     };
-
-    @Autowired
-    private MealService service;
 
     @BeforeClass
     public static void init() {
@@ -59,7 +58,7 @@ public class MealServiceTest {
 
     @AfterClass
     public static void writeLog() {
-        log.debug(resultLines.toString());
+        log.info(resultLines.toString());
     }
 
     @Test
