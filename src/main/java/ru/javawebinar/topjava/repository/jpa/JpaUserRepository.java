@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.repository.jpa;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,7 +11,6 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
-@Profile("jpa")
 @Transactional(readOnly = true)
 public class JpaUserRepository implements UserRepository {
 

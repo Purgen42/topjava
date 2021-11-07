@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.service;
 
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
@@ -30,7 +31,7 @@ public abstract class AbstractServiceTest {
 
     protected static final Logger log = getLogger("result");
 
-    private static final StringBuilder results = new StringBuilder();
+    private static StringBuilder results;
 
     @Rule
     public final Stopwatch stopwatch = new Stopwatch() {
@@ -42,11 +43,9 @@ public abstract class AbstractServiceTest {
         }
     };
 
-    @Autowired
-    private CacheManager cacheManager;
-
-    protected void setup(String cacheName) {
-        cacheManager.getCache(cacheName).clear();
+    @BeforeClass
+    public static void init() {
+        results = new StringBuilder();
     }
 
     @AfterClass
@@ -57,5 +56,4 @@ public abstract class AbstractServiceTest {
                 results +
                 "\n---------------------------------");
     }
-
 }

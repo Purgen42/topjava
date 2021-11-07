@@ -21,11 +21,6 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
     @Autowired
     protected MealService service;
 
-    @Before
-    public void setup() {
-        super.setup("meals");
-    }
-
     @Test
     public void delete() {
         service.delete(MEAL1_ID, USER_ID);
@@ -57,7 +52,6 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
         assertThrows(DataAccessException.class, () ->
                 service.create(new Meal(null, meal1.getDateTime(), "duplicate", 100), USER_ID));
     }
-
 
     @Test
     public void get() {
