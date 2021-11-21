@@ -3,6 +3,7 @@ package ru.javawebinar.topjava;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 
@@ -20,6 +21,10 @@ public class UserTestData {
 
     public static User getNew() {
         return new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Set.of(Role.USER, Role.ADMIN));
+    }
+
+    public static User getNewNoRoles() {
+        return new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.emptySet());
     }
 
     public static User getUpdated() {

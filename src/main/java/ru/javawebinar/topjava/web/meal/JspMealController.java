@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.web;
+package ru.javawebinar.topjava.web.meal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,7 +32,7 @@ public class JspMealController extends AbstractMealController {
         super(service);
     }
 
-    @GetMapping("")
+    @GetMapping
     public String getFilteredMeals(Model model, HttpServletRequest request) {
         LocalDate startDate = parseLocalDate(request.getParameter("startDate"));
         LocalDate endDate = parseLocalDate(request.getParameter("endDate"));
@@ -60,9 +60,8 @@ public class JspMealController extends AbstractMealController {
         return editMeal(model, new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000));
     }
 
-    @PostMapping("")
+    @PostMapping
     public String setMeal(HttpServletRequest request) throws UnsupportedEncodingException {
-        request.setCharacterEncoding("UTF-8");
         Meal meal = new Meal(
                 LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
