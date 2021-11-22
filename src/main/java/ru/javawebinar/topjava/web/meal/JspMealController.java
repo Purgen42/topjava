@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
-import ru.javawebinar.topjava.web.meal.AbstractMealController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -33,7 +32,7 @@ public class JspMealController extends AbstractMealController {
     }
 
     @GetMapping
-    public String getFilteredMeals(Model model, HttpServletRequest request) {
+    public String getFiltered(Model model, HttpServletRequest request) {
         LocalDate startDate = parseLocalDate(request.getParameter("startDate"));
         LocalDate endDate = parseLocalDate(request.getParameter("endDate"));
         LocalTime startTime = parseLocalTime(request.getParameter("startTime"));
@@ -44,24 +43,24 @@ public class JspMealController extends AbstractMealController {
     }
 
     @GetMapping("/delete")
-    public String deleteMeal(HttpServletRequest request) {
+    public String delete(HttpServletRequest request) {
         super.delete(getId(request));
         return "redirect:/meals";
     }
 
     @GetMapping("/update")
-    public String updateMeal(Model model, HttpServletRequest request) {
-        return editMeal(model, service.get(getId(request), authUserId()));
+    public String update(Model model, HttpServletRequest request) {
+        return edit(model, service.get(getId(request), authUserId()));
     }
 
     @GetMapping("/create")
-    public String createMeal(Model model) {
+    public String create(Model model) {
         model.addAttribute("isnew", true);
-        return editMeal(model, new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000));
+        return edit(model, new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000));
     }
 
     @PostMapping
-    public String setMeal(HttpServletRequest request) throws UnsupportedEncodingException {
+    public String set(HttpServletRequest request) throws UnsupportedEncodingException {
         Meal meal = new Meal(
                 LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
@@ -76,7 +75,7 @@ public class JspMealController extends AbstractMealController {
         return "redirect:/meals";
     }
 
-    private String editMeal(Model model, Meal meal) {
+    private String edit(Model model, Meal meal) {
         model.addAttribute("meal", meal);
         return "mealForm";
     }

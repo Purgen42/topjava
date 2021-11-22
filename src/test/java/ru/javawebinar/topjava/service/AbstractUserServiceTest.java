@@ -1,9 +1,7 @@
 package ru.javawebinar.topjava.service;
 
 import org.junit.Before;
-import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.dao.DataAccessException;
@@ -21,7 +19,6 @@ import java.util.Set;
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.UserTestData.*;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Autowired
@@ -35,8 +32,8 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Before
     public void setup() {
+        cacheManager.getCache("users").clear();
         if (!isProfileActive(Profiles.JDBC)) {
-            cacheManager.getCache("users").clear();
             jpaUtil.clear2ndLevelHibernateCache();
         }
     }
@@ -96,7 +93,7 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void a_update() {
+    public void update() {
         service.getAll();
         User updated = getUpdated();
         service.update(updated);
@@ -104,15 +101,13 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void b_getAll() {
-        cacheManager.getCache("users").clear();
+    public void getAll() {
         List<User> all = service.getAll();
         USER_MATCHER.assertMatch(all, admin, user);
     }
 
     @Test
     public void createWithException() throws Exception {
-//        Assume.assumeFalse(isProfileActive(Profiles.JDBC));
         validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "  ", "mail@yandex.ru", "password", Role.USER)));
         validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "User", "  ", "password", Role.USER)));
         validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "User", "mail@yandex.ru", "  ", Role.USER)));

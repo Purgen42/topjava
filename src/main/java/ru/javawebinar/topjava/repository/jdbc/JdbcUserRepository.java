@@ -18,7 +18,7 @@ import ru.javawebinar.topjava.repository.UserRepository;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
@@ -28,10 +28,12 @@ import static ru.javawebinar.topjava.util.ValidationUtil.validateEntity;
 @Transactional(readOnly = true)
 public class JdbcUserRepository implements UserRepository {
 
-    private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> {
-        User user = new BeanPropertyRowMapper<>(User.class).mapRow(rs, rowNum);
+    private static final BeanPropertyRowMapper<User> ROW_MAPPER = BeanPropertyRowMapper.newInstance(User.class);
+
+    private static final RowMapper<User> ROW_MAPPER_WITH_ROLES = (rs, rowNum) -> {
+        User user = ROW_MAPPER.mapRow(rs, rowNum);
         ResultSet rolesResultSet = rs.getArray("roles_array").getResultSet();
-        Set <Role> roles = new HashSet<>();
+        Set <Role> roles = EnumSet.noneOf(Role.class);
         while(rolesResultSet.next()) {
             String roleName = rolesResultSet.getString(2);
             if (roleName != null) {
@@ -80,44 +82,6 @@ public class JdbcUserRepository implements UserRepository {
         return user;
     }
 
-    @Override
-    @Transactional
-    public boolean delete(int id) {
-        return jdbcTemplate.update("DELETE FROM users WHERE id=?", id) != 0;
-    }
-
-    @Override
-    public User get(int id) {
-//        jdbcTemplate.query("SELECT * FROM users WHERE id=?", ROW_MAPPER, id);
-        List<User> users = jdbcTemplate.query("""
-                        SELECT u.id, u.name, u.email, u.password, u.registered, u.enabled, 
-                        u.calories_per_day, ARRAY_AGG(ur.role) as roles_array FROM users u LEFT JOIN user_roles ur ON u.id = ur.user_id  WHERE u.id=? 
-                        GROUP BY u.id, u.name, u.email, u.password, u.registered, u.enabled, u.calories_per_day ORDER BY name, email
-                      """, ROW_MAPPER, id);
-        return DataAccessUtils.singleResult(users);
-    }
-
-    @Override
-    public User getByEmail(String email) {
-//        return jdbcTemplate.queryForObject("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
-//        List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
-        List<User> users = jdbcTemplate.query("""
-                        SELECT u.id, u.name, u.email, u.password, u.registered, u.enabled, 
-                        u.calories_per_day, ARRAY_AGG(ur.role) as roles_array FROM users u LEFT JOIN user_roles ur ON u.id = ur.user_id  WHERE email=? 
-                        GROUP BY u.id, u.name, u.email, u.password, u.registered, u.enabled, u.calories_per_day ORDER BY name, email
-                      """, ROW_MAPPER, email);
-        return DataAccessUtils.singleResult(users);
-    }
-
-    @Override
-    public List<User> getAll() {
-        return jdbcTemplate.query("""
-                        SELECT u.id, u.name, u.email, u.password, u.registered, u.enabled, 
-                        u.calories_per_day, ARRAY_AGG(ur.role) as roles_array FROM users u LEFT JOIN user_roles ur ON u.id = ur.user_id 
-                        GROUP BY u.id, u.name, u.email, u.password, u.registered, u.enabled, u.calories_per_day ORDER BY name, email
-                      """, ROW_MAPPER);
-    }
-
     private void insertRoles(User user) {
         Role[] roleArray = user.getRoles().toArray(new Role[0]);
         if (roleArray.length == 0) {
@@ -136,5 +100,43 @@ public class JdbcUserRepository implements UserRepository {
                         return roleArray.length;
                     }
                 });
+    }
+
+    @Override
+    @Transactional
+    public boolean delete(int id) {
+        return jdbcTemplate.update("DELETE FROM users WHERE id=?", id) != 0;
+    }
+
+    @Override
+    public User get(int id) {
+//        jdbcTemplate.query("SELECT * FROM users WHERE id=?", ROW_MAPPER, id);
+        List<User> users = jdbcTemplate.query("""
+                        SELECT u.id, u.name, u.email, u.password, u.registered, u.enabled, 
+                        u.calories_per_day, ARRAY_AGG(ur.role) as roles_array FROM users u LEFT JOIN user_roles ur ON u.id = ur.user_id  WHERE u.id=? 
+                        GROUP BY u.id, u.name, u.email, u.password, u.registered, u.enabled, u.calories_per_day ORDER BY name, email
+                      """, ROW_MAPPER_WITH_ROLES, id);
+        return DataAccessUtils.singleResult(users);
+    }
+
+    @Override
+    public User getByEmail(String email) {
+//        return jdbcTemplate.queryForObject("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
+//        List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
+        List<User> users = jdbcTemplate.query("""
+                        SELECT u.id, u.name, u.email, u.password, u.registered, u.enabled, 
+                        u.calories_per_day, ARRAY_AGG(ur.role) as roles_array FROM users u LEFT JOIN user_roles ur ON u.id = ur.user_id  WHERE email=? 
+                        GROUP BY u.id, u.name, u.email, u.password, u.registered, u.enabled, u.calories_per_day ORDER BY name, email
+                      """, ROW_MAPPER_WITH_ROLES, email);
+        return DataAccessUtils.singleResult(users);
+    }
+
+    @Override
+    public List<User> getAll() {
+        return jdbcTemplate.query("""
+                        SELECT u.id, u.name, u.email, u.password, u.registered, u.enabled, 
+                        u.calories_per_day, ARRAY_AGG(ur.role) as roles_array FROM users u LEFT JOIN user_roles ur ON u.id = ur.user_id 
+                        GROUP BY u.id, u.name, u.email, u.password, u.registered, u.enabled, u.calories_per_day ORDER BY name, email
+                      """, ROW_MAPPER_WITH_ROLES);
     }
 }

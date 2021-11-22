@@ -8,11 +8,9 @@
 <jsp:include page="fragments/bodyHeader.jsp"/>
 
 <section>
-    <spring:message code="meal.create" var="create"/>
-    <spring:message code="meal.edit" var="edit"/>
-    <h2>${isnew ? create : edit}</h2>
+    <h2><spring:message code="meal.${isnew ? 'create' : 'edit'}"/></h2>
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
-    <form method="post" action="." accept-charset="UTF-8">
+    <form method="post" action="meals" accept-charset="UTF-8">
         <input type="hidden" name="id" value="${meal.id}">
         <dl>
             <dt><spring:message code="meal.date"/>:</dt>
