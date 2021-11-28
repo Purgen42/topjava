@@ -13,8 +13,6 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -41,20 +39,25 @@ public class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getFiltered() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "filter?startdate=2020-01-30&starttime=10:00&enddate=2020-01-30&endtime=20:00"))
+        perform(MockMvcRequestBuilders.get(REST_URL + "filter")
+                .param("startdate", "2020-01-31")
+                .param("starttime", "10:00")
+                .param("enddate", "2020-01-31")
+                .param("endtime", "20:00"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MEAL_TO_MATCHER.contentJson(MealsUtil.getTos(List.of(meal2, meal1), user.getCaloriesPerDay())));
+                .andExpect(MEAL_TO_MATCHER.contentJson(mealTos.subList(1, 3)));
     }
 
     @Test
     void getFilteredWithNull() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "filter?startdate=&starttime=&enddate=&endtime="))
+        perform(MockMvcRequestBuilders.get(REST_URL + "filter")
+                .param("startdate", ""))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MEAL_TO_MATCHER.contentJson(MealsUtil.getTos(meals, user.getCaloriesPerDay())));
+                .andExpect(MEAL_TO_MATCHER.contentJson(mealTos));
     }
 
     @Test

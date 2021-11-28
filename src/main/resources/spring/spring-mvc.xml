@@ -59,7 +59,7 @@
         </property>
     </bean>
 
-    <bean id="localDateFormatter" class="ru.javawebinar.topjava.web.meal.formatter.LocalDateFormatter"/>
-    <bean id="localTimeFormatter" class="ru.javawebinar.topjava.web.meal.formatter.LocalTimeFormatter"/>
+    <bean id="localDateFormatter" class="ru.javawebinar.topjava.formatter.LocalDateFormatter"/>
+    <bean id="localTimeFormatter" class="ru.javawebinar.topjava.formatter.LocalTimeFormatter"/>
 
 </beans>
