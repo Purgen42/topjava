@@ -40,7 +40,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getFiltered() throws Exception {
-        MvcResult result = perform(MockMvcRequestBuilders.get(REST_URL + "filter")
+        perform(MockMvcRequestBuilders.get(REST_URL + "filter")
                 .param("startdate", "2020-01-31")
                 .param("starttime", "10:00")
                 .param("enddate", "2020-01-31")
@@ -48,21 +48,17 @@ public class MealRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andReturn();
-
-        Assertions.assertEquals(JsonUtil.readValues(result.getResponse().getContentAsString(), MealTo.class), mealTos.subList(1, 3));
+                .andExpect(MEAL_TO_MATCHER.contentJson(mealTos.subList(1, 3)));
     }
 
     @Test
     void getFilteredWithNull() throws Exception {
-        MvcResult result = perform(MockMvcRequestBuilders.get(REST_URL + "filter")
+        perform(MockMvcRequestBuilders.get(REST_URL + "filter")
                 .param("startdate", ""))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andReturn();
-
-        Assertions.assertEquals(JsonUtil.readValues(result.getResponse().getContentAsString(), MealTo.class), mealTos);
+                .andExpect(MEAL_TO_MATCHER.contentJson(mealTos));
     }
 
     @Test
@@ -101,12 +97,10 @@ public class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getAll() throws Exception {
-        MvcResult result = perform(MockMvcRequestBuilders.get(REST_URL))
+        perform(MockMvcRequestBuilders.get(REST_URL))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andReturn();
-
-        Assertions.assertEquals(JsonUtil.readValues(result.getResponse().getContentAsString(), MealTo.class), mealTos);
+                .andExpect(MEAL_TO_MATCHER.contentJson(mealTos));
     }
 }

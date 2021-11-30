@@ -21,6 +21,26 @@ public class MatcherFactory {
         return new Matcher<>(clazz, fieldsToIgnore);
     }
 
+    public static <T> Matcher<T> usingEqualComparator(Class<T> clazz) {
+        return new EqualMatcher<>(clazz);
+    }
+
+    public static class EqualMatcher<T> extends Matcher <T> {
+        public EqualMatcher(Class<T> clazz) {
+            super(clazz);
+        }
+
+        @Override
+        public void assertMatch(T actual, T expected) {
+            assertThat(actual).isEqualTo(expected);
+        }
+
+        @Override
+        public void assertMatch(Iterable<T> actual, Iterable<T> expected) {
+            assertThat(actual).isEqualTo(expected);
+        }
+    }
+
     public static class Matcher<T> {
         private final Class<T> clazz;
         private final String[] fieldsToIgnore;
