@@ -1,7 +1,14 @@
 const mealAjaxUrl = "user/meals/";
 
 const ctx = {
-    ajaxUrl: mealAjaxUrl
+    ajaxUrl: mealAjaxUrl,
+    filterMapping: "filter",
+    filterParams: {
+        startDate: "",
+        endDate: "",
+        startTime: "",
+        endTime: ""
+    }
 };
 
 $(function () {
@@ -44,17 +51,17 @@ $(function () {
 });
 
 function setFilter() {
-    $.get(ctx.ajaxUrl + "filter",
+    ctx.filterParams =
         {
             startDate: $("#startDate").val(),
             endDate: $("#endDate").val(),
             startTime: $("#startTime").val(),
-            endTime: $("#endTime").val(),
-        },
-        drawTable);
+            endTime: $("#endTime").val()
+        };
+    updateTable()
 }
 
 function resetFilter() {
     $("#filter").get(0).reset();
-    updateTable();
+    setFilter();
 }

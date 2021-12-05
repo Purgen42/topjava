@@ -33,7 +33,9 @@ function deleteRow(id) {
 }
 
 function updateTable() {
-    $.get(ctx.ajaxUrl, drawTable);
+    $.get(ctx.ajaxUrl + ctx.filterMapping,
+        ctx.filterParams,
+        drawTable);
 }
 
 function drawTable(data) {
