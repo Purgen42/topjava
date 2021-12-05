@@ -45,3 +45,14 @@ $(function () {
         })
     );
 });
+
+function enableRow(id, cb) {
+    $.ajax({
+        url: ctx.ajaxUrl + id,
+        type: "POST",
+        data: {enabled: cb.checked}
+    }).done(function () {
+        updateTable();
+        successNoty(cb.checked ? "Enabled" : "Disabled");
+    });
+}
