@@ -3,8 +3,9 @@ const userAjaxUrl = "admin/users/";
 // https://stackoverflow.com/a/5064235/548473
 const ctx = {
     ajaxUrl: userAjaxUrl,
-    filterMapping: "",
-    filterParams: {}
+    updateTable: function () {
+        $.get(userAjaxUrl, drawTable);
+    }
 };
 
 // $(document).ready(function () {
@@ -49,12 +50,20 @@ $(function () {
 });
 
 function enableRow(id, cb) {
+    let isChecked = cb.checked;
     $.ajax({
         url: ctx.ajaxUrl + id,
         type: "POST",
-        data: {enabled: cb.checked}
-    }).done(function () {
-        updateTable();
-        successNoty(cb.checked ? "Enabled" : "Disabled");
-    });
+        data: {enabled: isChecked}
+    }).then(
+        // done
+        function () {
+            $(cb).closest('tr').attr("data-user-enabled", isChecked);
+            successNoty(isChecked ? "Enabled" : "Disabled");
+        },
+        // fail
+        function () {
+            $(cb).prop("checked", !isChecked);
+        }
+    );
 }

@@ -16,23 +16,23 @@
             <form id="filter">
                 <div class="form-group">
                     <label for="startDate"><spring:message code="meal.startDate"/></label>
-                    <input type="text" id="startDate">
+                    <input type="date" id="startDate">
                 </div>
                 <div class="form-group">
                     <label for="endDate"><spring:message code="meal.endDate"/></label>
-                    <input type="text" id="endDate">
+                    <input type="date" id="endDate">
                 </div>
                 <div class="form-group">
                     <label for="startTime"><spring:message code="meal.startTime"/></label>
-                    <input type="text" id="startTime">
+                    <input type="time" id="startTime">
                 </div>
                 <div class="form-group">
                     <label for="endTime"><spring:message code="meal.endTime"/></label>
-                    <input type="text" id="endTime">
+                    <input type="time" id="endTime">
                 </div>
             </form>
             <p>
-                <button class="btn btn-primary" onclick="setFilter()"><spring:message code="meal.filter"/></button>
+                <button class="btn btn-primary" onclick="ctx.updateTable()"><spring:message code="meal.filter"/></button>
                 <button class="btn btn-primary" onclick="resetFilter()"><spring:message code="common.cancel"/></button>
             </p>
             <p><button class="btn btn-primary" onclick="add()">
@@ -74,11 +74,14 @@
             </div>
             <div class="modal-body">
                 <form id="detailsForm">
-                    <input type="hidden" id="id" name="id">
+                    <input type="hidden" id="id" name="id"/>
+
+                    <input type="hidden" id="dateTime" name="dateTime"/>
 
                     <div class="form-group">
                         <label for="dateTime" class="col-form-label"><spring:message code="meal.dateTime"/></label>
-                        <input class="form-control" id="dateTime" name="dateTime" autocomplete="off"
+                        <br/>
+                        <input type="datetime-local" id="excludedDateTime" onchange="convertDateFormat();"
                                placeholder="<spring:message code="meal.dateTime"/>">
                     </div>
 

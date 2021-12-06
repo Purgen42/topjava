@@ -2,12 +2,15 @@ const mealAjaxUrl = "user/meals/";
 
 const ctx = {
     ajaxUrl: mealAjaxUrl,
-    filterMapping: "filter",
-    filterParams: {
-        startDate: "",
-        endDate: "",
-        startTime: "",
-        endTime: ""
+    updateTable: function () {
+        $.get(mealAjaxUrl + "filter",
+            {
+                startDate: $("#startDate").val(),
+                endDate: $("#endDate").val(),
+                startTime: $("#startTime").val(),
+                endTime: $("#endTime").val()
+            },
+            drawTable);
     }
 };
 
@@ -43,25 +46,15 @@ $(function () {
             ]
         })
     );
-    $('#dateTime').datetimepicker();
-    $('#startDate').datetimepicker({timepicker: false, format: 'Y-m-d'});
-    $('#endDate').datetimepicker({timepicker: false, format: 'Y-m-d'});
-    $('#startTime').datetimepicker({datepicker: false, format: 'H:i'});
-    $('#endTime').datetimepicker({datepicker: false, format: 'H:i'});
 });
-
-function setFilter() {
-    ctx.filterParams =
-        {
-            startDate: $("#startDate").val(),
-            endDate: $("#endDate").val(),
-            startTime: $("#startTime").val(),
-            endTime: $("#endTime").val()
-        };
-    updateTable()
-}
 
 function resetFilter() {
     $("#filter").get(0).reset();
-    setFilter();
+    ctx.updateTable();
+}
+
+function convertDateFormat() {
+    let date = new Date($("#excludedDateTime").val());
+    $("#dateTime").val(date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).slice(-2) + "-" + ("0" + date.getDate()).slice(-2)
+        + " " + ("0" + date.getHours()).slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2));
 }
