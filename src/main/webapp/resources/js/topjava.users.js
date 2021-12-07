@@ -53,8 +53,10 @@ function enableRow(id, cb) {
     let isChecked = cb.checked;
     $.ajax({
         url: ctx.ajaxUrl + id,
-        type: "POST",
-        data: {enabled: isChecked}
+        data: JSON.stringify({enabled: isChecked}),
+        type: "PATCH",
+        contentType: "application/json",
+        dataType: "json"
     }).then(
         // done
         function () {
