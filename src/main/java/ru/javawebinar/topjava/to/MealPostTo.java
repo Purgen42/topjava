@@ -16,13 +16,14 @@ public class MealPostTo extends BaseTo implements Serializable {
     @Size(min = 2, max = 120)
     private String description;
 
+    @NotNull
     @Range(min = 10, max = 5000)
-    private int calories;
+    private Integer calories;
 
     public MealPostTo() {
     }
 
-    public MealPostTo(Integer id, LocalDateTime dateTime, String description, int calories) {
+    public MealPostTo(Integer id, LocalDateTime dateTime, String description, Integer calories) {
         super(id);
         this.dateTime = dateTime;
         this.description = description;
@@ -45,11 +46,11 @@ public class MealPostTo extends BaseTo implements Serializable {
         this.description = description;
     }
 
-    public int getCalories() {
+    public Integer getCalories() {
         return calories;
     }
 
-    public void setCalories(int calories) {
+    public void setCalories(Integer calories) {
         this.calories = calories;
     }
 }
