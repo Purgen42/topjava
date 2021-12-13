@@ -1,11 +1,8 @@
 package ru.javawebinar.topjava.util;
 
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.Role;
-import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.to.MealBaseTo;
+import ru.javawebinar.topjava.to.MealPostTo;
 import ru.javawebinar.topjava.to.MealTo;
-import ru.javawebinar.topjava.to.UserTo;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -45,14 +42,7 @@ public class MealsUtil {
         return new MealTo(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
     }
 
-    public static Meal createNewFromBaseTo(MealBaseTo mealBaseTo) {
-        return new Meal(null, mealBaseTo.getDateTime(), mealBaseTo.getDescription(), mealBaseTo.getCalories());
-    }
-
-    public static Meal updateFromBaseTo(Meal meal, MealBaseTo mealBaseTo) {
-        meal.setDateTime(mealBaseTo.getDateTime());
-        meal.setDescription(mealBaseTo.getDescription());
-        meal.setCalories(mealBaseTo.getCalories());
-        return meal;
+    public static Meal createNewFromPostTo(MealPostTo mealPostTo) {
+        return new Meal(null, mealPostTo.getDateTime(), mealPostTo.getDescription(), mealPostTo.getCalories());
     }
 }

@@ -17,17 +17,12 @@ function clearFilter() {
     $.get(mealAjaxUrl, updateTableByData);
 }
 
-function convertAndSave() {
-    $('#hiddenDateTime').val($('#dateTime').val().replace(" ", "T"));
-    save();
-}
-
 $.ajaxSetup({
     converters: {
         "text json": function (str) {
             var json = JSON.parse(str, function(k, v) {
                 if (k === "dateTime") {
-                    return v.replace("T", " ");
+                    return v.substr(0, 16).replace('T', ' ');
                 }
                 return v;
             });
@@ -82,7 +77,39 @@ $(function () {
 $('#dateTime').datetimepicker({
         format: 'Y-m-d H:i',
     });
-$('#startDate').datetimepicker({timepicker: false, format: 'Y-m-d'});
-$('#endDate').datetimepicker({timepicker: false, format: 'Y-m-d'});
-$('#startTime').datetimepicker({datepicker: false, format: 'H:i'});
-$('#endTime').datetimepicker({datepicker: false, format: 'H:i'});
+$('#startDate').datetimepicker({
+    timepicker: false,
+    format: 'Y-m-d',
+    onSelectDate: function(){
+        $('#endDate').datetimepicker('setOptions',{
+            minDate: $('#startDate').val() ? $('#startDate').val() : false
+        })
+    }
+});
+$('#endDate').datetimepicker({
+    timepicker: false,
+    format: 'Y-m-d',
+    onSelectDate: function(){
+        $('#startDate').datetimepicker('setOptions',{
+            maxDate: $('#endDate').val() ? $('#endDate').val() : false
+        })
+    }
+});
+$('#startTime').datetimepicker({
+    datepicker: false,
+    format: 'H:i',
+    onSelectTime: function(){
+        $('#endTime').datetimepicker('setOptions',{
+            minTime: $('#startTime').val() ? $('#startTime').val() : false
+        })
+    }
+});
+$('#endTime').datetimepicker({
+    datepicker: false,
+    format: 'H:i',
+    onSelectTime: function(){
+        $('#startTime').datetimepicker('setOptions',{
+            maxTime: $('#endTime').val() ? $('#endTime').val() : false
+        })
+    }
+});

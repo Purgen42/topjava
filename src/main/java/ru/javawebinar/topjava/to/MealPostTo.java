@@ -5,24 +5,24 @@ import org.hibernate.validator.constraints.Range;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class MealBaseTo extends BaseTo {
-
+public class MealPostTo extends BaseTo implements Serializable {
     @NotNull
-    protected LocalDateTime dateTime;
+    private LocalDateTime dateTime;
 
     @NotBlank
     @Size(min = 2, max = 120)
-    protected String description;
+    private String description;
 
     @Range(min = 10, max = 5000)
-    protected int calories;
+    private int calories;
 
-    public MealBaseTo() {
+    public MealPostTo() {
     }
 
-    public MealBaseTo(Integer id, LocalDateTime dateTime, String description, int calories) {
+    public MealPostTo(Integer id, LocalDateTime dateTime, String description, int calories) {
         super(id);
         this.dateTime = dateTime;
         this.description = description;

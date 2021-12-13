@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
-import ru.javawebinar.topjava.to.MealBaseTo;
+import ru.javawebinar.topjava.to.MealPostTo;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
@@ -15,11 +15,12 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+import static ru.javawebinar.topjava.util.MealsUtil.createNewFromPostTo;
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 
 public abstract class AbstractMealController {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private MealService service;
@@ -49,11 +50,11 @@ public abstract class AbstractMealController {
         return service.create(meal, userId);
     }
 
-    public Meal create(MealBaseTo mealBaseTo) {
+    public Meal create(MealPostTo mealPostTo) {
         int userId = SecurityUtil.authUserId();
-        log.info("create {} for user {}", mealBaseTo, userId);
-        checkNew(mealBaseTo);
-        return service.create(MealsUtil.createNewFromBaseTo(mealBaseTo), userId);
+        log.info("create {} for user {}", mealPostTo, userId);
+        checkNew(mealPostTo);
+        return service.create(createNewFromPostTo(mealPostTo), userId);
     }
 
     public void update(Meal meal, int id) {
@@ -63,11 +64,11 @@ public abstract class AbstractMealController {
         service.update(meal, userId);
     }
 
-    public void update(MealBaseTo mealBaseTo, int id) {
+    public void update(MealPostTo mealPostTo, int id) {
         int userId = SecurityUtil.authUserId();
-        log.info("update {} for user {}", mealBaseTo, userId);
-        assureIdConsistent(mealBaseTo, id);
-        service.update(mealBaseTo, userId);
+        log.info("update {} for user {}", mealPostTo, userId);
+        assureIdConsistent(mealPostTo, id);
+        service.update(createNewFromPostTo(mealPostTo), userId);
     }
 
     /**
@@ -77,7 +78,7 @@ public abstract class AbstractMealController {
      * </ol>
      */
     public List<MealTo> getBetween(@Nullable LocalDate startDate, @Nullable LocalTime startTime,
-                                            @Nullable LocalDate endDate, @Nullable LocalTime endTime) {
+                                   @Nullable LocalDate endDate, @Nullable LocalTime endTime) {
         int userId = SecurityUtil.authUserId();
         log.info("getBetween dates({} - {}) time({} - {}) for user {}", startDate, endDate, startTime, endTime, userId);
 
