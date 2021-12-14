@@ -78,7 +78,6 @@
 </div>
 <jsp:include page="fragments/footer.jsp"/>
 </body>
-<c:set var="addTitle" value="user.add" />
-<c:set var="editTitle" value="user.edit" />
+<c:set var="titlePrefix" value="user" />
 <%@include file="fragments/i18nInit.jsp" %>
 </html>

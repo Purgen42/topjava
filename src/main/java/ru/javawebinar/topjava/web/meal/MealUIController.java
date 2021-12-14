@@ -16,6 +16,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.getResponseFromResult;
+import static ru.javawebinar.topjava.util.MealsUtil.createMealFromPostTo;
 
 @RestController
 @RequestMapping(value = "/profile/meals", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -45,10 +46,11 @@ public class MealUIController extends AbstractMealController {
         if (result.hasErrors()) {
             return getResponseFromResult(result);
         }
-        if (mealPostTo.isNew()) {
-            super.create(mealPostTo);
+        Meal meal = createMealFromPostTo(mealPostTo);
+        if (meal.isNew()) {
+            super.create(meal);
         } else {
-            super.update(mealPostTo, mealPostTo.id());
+            super.update(meal, meal.id());
         }
         return ResponseEntity.ok().build();
     }

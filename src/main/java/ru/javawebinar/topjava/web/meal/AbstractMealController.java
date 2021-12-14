@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
-import ru.javawebinar.topjava.to.MealPostTo;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
@@ -15,7 +14,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-import static ru.javawebinar.topjava.util.MealsUtil.createNewFromPostTo;
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 
@@ -50,25 +48,11 @@ public abstract class AbstractMealController {
         return service.create(meal, userId);
     }
 
-    public Meal create(MealPostTo mealPostTo) {
-        int userId = SecurityUtil.authUserId();
-        log.info("create {} for user {}", mealPostTo, userId);
-        checkNew(mealPostTo);
-        return service.create(createNewFromPostTo(mealPostTo), userId);
-    }
-
     public void update(Meal meal, int id) {
         int userId = SecurityUtil.authUserId();
         log.info("update {} for user {}", meal, userId);
         assureIdConsistent(meal, id);
         service.update(meal, userId);
-    }
-
-    public void update(MealPostTo mealPostTo, int id) {
-        int userId = SecurityUtil.authUserId();
-        log.info("update {} for user {}", mealPostTo, userId);
-        assureIdConsistent(mealPostTo, id);
-        service.update(createNewFromPostTo(mealPostTo), userId);
     }
 
     /**

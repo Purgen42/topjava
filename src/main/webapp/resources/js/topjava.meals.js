@@ -80,7 +80,7 @@ $('#dateTime').datetimepicker({
 $('#startDate').datetimepicker({
     timepicker: false,
     format: 'Y-m-d',
-    onSelectDate: function(){
+    onChangeDateTime: function(){
         $('#endDate').datetimepicker('setOptions',{
             minDate: $('#startDate').val() ? $('#startDate').val() : false
         })
@@ -89,7 +89,7 @@ $('#startDate').datetimepicker({
 $('#endDate').datetimepicker({
     timepicker: false,
     format: 'Y-m-d',
-    onSelectDate: function(){
+    onChangeDateTime: function(){
         $('#startDate').datetimepicker('setOptions',{
             maxDate: $('#endDate').val() ? $('#endDate').val() : false
         })
@@ -98,7 +98,7 @@ $('#endDate').datetimepicker({
 $('#startTime').datetimepicker({
     datepicker: false,
     format: 'H:i',
-    onSelectTime: function(){
+    onChangeDateTime: function(){
         $('#endTime').datetimepicker('setOptions',{
             minTime: $('#startTime').val() ? $('#startTime').val() : false
         })
@@ -107,7 +107,7 @@ $('#startTime').datetimepicker({
 $('#endTime').datetimepicker({
     datepicker: false,
     format: 'H:i',
-    onSelectTime: function(){
+    onChangeDateTime: function(){
         $('#startTime').datetimepicker('setOptions',{
             maxTime: $('#endTime').val() ? $('#endTime').val() : false
         })

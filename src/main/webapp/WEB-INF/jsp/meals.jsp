@@ -111,7 +111,6 @@
 </div>
 <jsp:include page="fragments/footer.jsp"/>
 </body>
-<c:set var="addTitle" value="meal.add" />
-<c:set var="editTitle" value="meal.edit" />
+<c:set var="titlePrefix" value="meal" />
 <%@include file="fragments/i18nInit.jsp" %>
 </html>

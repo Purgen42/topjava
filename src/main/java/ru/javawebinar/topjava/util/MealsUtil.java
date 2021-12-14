@@ -42,7 +42,7 @@ public class MealsUtil {
         return new MealTo(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
     }
 
-    public static Meal createNewFromPostTo(MealPostTo mealPostTo) {
-        return new Meal(null, mealPostTo.getDateTime(), mealPostTo.getDescription(), mealPostTo.getCalories());
+    public static Meal createMealFromPostTo(MealPostTo mealPostTo) {
+        return new Meal(mealPostTo.getId(), mealPostTo.getDateTime(), mealPostTo.getDescription(), mealPostTo.getCalories());
     }
 }
