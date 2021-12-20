@@ -3,6 +3,8 @@ package ru.javawebinar.topjava.web.user;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.to.UserTo;
@@ -71,5 +73,9 @@ public abstract class AbstractUserController {
     public void enable(int id, boolean enabled) {
         log.info(enabled ? "enable {}" : "disable {}", id);
         service.enable(id, enabled);
+    }
+
+    protected void addDupeMailError(BindingResult result) {
+        result.addError(new FieldError("userTo", "email", "User with this email already exists"));
     }
 }
