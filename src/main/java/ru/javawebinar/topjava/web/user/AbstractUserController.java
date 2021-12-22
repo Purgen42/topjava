@@ -74,8 +74,4 @@ public abstract class AbstractUserController {
         log.info(enabled ? "enable {}" : "disable {}", id);
         service.enable(id, enabled);
     }
-
-    protected void addDupeMailError(BindingResult result) {
-        result.addError(new FieldError("userTo", "email", "User with this email already exists"));
-    }
 }

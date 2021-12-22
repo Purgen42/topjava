@@ -31,7 +31,7 @@ public class ProfileUIController extends AbstractUserController {
                 super.update(userTo, SecurityUtil.authUserId());
             }
             catch (DataIntegrityViolationException e) {
-                addDupeMailError(result);
+                result.rejectValue("email", "unique.email", "User with this email already exists");
                 return "profile";
             }
             SecurityUtil.get().setTo(userTo);
@@ -57,7 +57,9 @@ public class ProfileUIController extends AbstractUserController {
                 super.create(userTo);
             }
             catch (DataIntegrityViolationException e) {
-                addDupeMailError(result);
+                result.rejectValue("email", "unique.email", "User with this email already exists");
+                model.addAttribute("userTo", userTo);
+                model.addAttribute("register", true);
                 return "profile";
             }
             status.setComplete();
